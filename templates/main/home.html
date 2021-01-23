@@ -10,7 +10,7 @@
 			  		<h5 class="card-title">Total Orders</h5>
 			  	</div>
 			  	<div class="card-body">
-			    	<h3 class="card-title">5</h3>
+			    	<h3 class="card-title">{{orders_total}}</h3>
 			  	</div>
 			</div>
 		</div>
@@ -23,7 +23,7 @@
 			  		<h5 class="card-title">Orders Delivered</h5>
 			  	</div>
 			  	<div class="card-body">
-			    	<h3 class="card-title">5</h3>
+			    	<h3 class="card-title">{{orders_delivered}}</h3>
 			  	</div>
 			</div>
 		</div>
@@ -36,7 +36,7 @@
 			  		<h5 class="card-title">Orders Pending</h5>
 			  	</div>
 			  	<div class="card-body">
-			    	<h3 class="card-title">5</h3>
+			    	<h3 class="card-title">{{orders_pending}}</h3>
 			  	</div>
 			</div>
 		</div>
@@ -55,9 +55,16 @@
 				<tr>
 					<th></th>
 					<th>Customer</th>
-					<th>Orders</th>
+					<th>Phone</th>
 				</tr>
 
+				{% for customer in customers %}
+				<tr>
+					<td><a class="btn btn-sm btn-info" href="{% url 'customer' customer.id%}">View</a></td>
+					<td>{{customer.name}}</td>
+					<td>+{{customer.telephone}}</td>
+				</tr>
+				{%endfor%}
 			</table>
 		</div>
 	</div>
@@ -75,6 +82,17 @@
 					<th>Update</th>
 					<th>Remove</th>
 				</tr>
+
+				{% for order in orders %}
+				<tr>
+					<th>{{order.product.name}}</th>
+					<th>{{order.date_created}}</th>
+					<th>{{order.status}}</th>
+					<td><a class="btn btn-sm btn-info" href="">Update</a></td>
+
+					<td><a class="btn btn-sm btn-danger" href="">Delete</a></td>
+				</tr>
+				{%endfor%}
 		
 			</table>
 		</div>

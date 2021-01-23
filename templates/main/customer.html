@@ -13,15 +13,15 @@
 		<div class="card card-body mt-3">
 			<h5>Contact Information</h5>
 			<hr>
-			<p>Email: test@gmail.com</p>
-			<p>Phone: +543543765</p>
+			<p>Email: {{customer.email}}</p>
+			<p>Phone: +{{customer.telephone}}</p>
 		</div>
 	</div>
 	<div class="col-md">
 		<div class="card card-body mt-3">
 			<h5>Total Orders:</h5>
 			<hr>
-			<h1 class="text-center">2</h1>
+			<h1 class="text-center">{{orders.count}}</h1>
 		</div>
 	</div>
 </div>
@@ -36,25 +36,20 @@
 				<tr><th><label for="id_product">Product:</label></th><td><select name="product" id="id_product">
 				  <option value="" selected>---------</option>
 
-				  <option value="2">BBQ Grill</option>
-
-				  <option value="3">Dishes</option>
-
-				  <option value="4">Ball</option>
+				  {% for product in products %}
+				  <option value="{{product.name}}">{{product.name}}</option>
+				  {%endfor%}
 
 					</select></td></tr>
 					<tr><th><label for="id_status">Status:</label></th><td><select name="status" id="id_status">
 					  <option value="" selected>---------</option>
-
-					  <option value="Pending">Pending</option>
-
-					  <option value="Out for delivery">Out for delivery</option>
-
-					  <option value="Delivered">Delivered</option>
+					  {% for order in orders_status %}
+					  <option value="{{order.status}}">{{order.status}}</option>
+					  {%endfor%}
 
 					</select></td></tr>
-					<tr><th><label for="id_start_date">Start Date:</label></th><td><input type="text" name="start_date" id="id_start_date"></td></tr>
-					<tr><th><label for="id_end_date">End Date:</label></th><td><input type="text" name="end_date" id="id_end_date"></td></tr>
+					<!-- <tr><th><label for="id_start_date">Start Date:</label></th><td><input type="text" name="start_date" id="id_start_date"></td></tr>
+					<tr><th><label for="id_end_date">End Date:</label></th><td><input type="text" name="end_date" id="id_end_date"></td></tr> -->
 
 					<button class="btn btn-primary" type="submit">Search</button>
 		  </form>
@@ -78,25 +73,16 @@
 				</tr>
 
 				
-
+				{% for order in orders %}
 				<tr>
-					<td>BBQ Grill</td>
-					<td>Out for delivery</td>
-					<td>Dec. 16, 2019, 11 p.m.</td>
-					<td>Out for delivery</td>
-					<td><a class="btn btn-sm btn-info" href="/update_order/15/">Update</a></td>
-					<td><a class="btn btn-sm btn-danger" href="/delete_order/15/">Delete</a></td>
+					<td>{{order.product.name}}</td>
+					<td>{{order.status}}</td>
+					<td>{{order.date_created}}</td>
+					<td>{{order.status}}</td>
+					<td><a class="btn btn-sm btn-info" href="">Update</a></td>
+					<td><a class="btn btn-sm btn-danger" href="">Delete</a></td>
 				</tr>
-				
-
-				<tr>
-					<td>Dishes</td>
-					<td>Out for delivery</td>
-					<td>Dec. 17, 2019, 1:06 a.m.</td>
-					<td>Out for delivery</td>
-					<td><a class="btn btn-sm btn-info" href="/update_order/16/">Update</a></td>
-					<td><a class="btn btn-sm btn-danger" href="/delete_order/16/">Delete</a></td>
-				</tr>
+				{%endfor%}
 			</table>
 		</div>
 	</div>
