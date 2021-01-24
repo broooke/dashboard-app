@@ -15,7 +15,6 @@ def homeView(request):
 	orders_total = len(orders)
 	orders_delivered = len(orders.filter(status='Delivered'))
 	orders_pending = len(orders.filter(status='Pending'))
-	print(orders_total)
 
 	context = {
 	'customers':customers,
@@ -31,8 +30,9 @@ def customerView(request, user_id):
 	customer = Customer.objects.get(id=user_id)
 	products = Product.objects.all()
 	orders = Order.objects.filter(customer=customer)
-	orders_status = Order.objects.all()
-	a = orders_status.values('status')
+	status = Order.objects.all()[0].get_status()
+	total_orders = customer.total_orders()
+	print(total_orders)
 
 	if 'product' in request.GET:
 		product = request.GET['product']
@@ -45,7 +45,8 @@ def customerView(request, user_id):
 		'orders':orders,
 		'customer':customer,
 		'products':products,
-		'orders_status':orders_status,
+		'status':status,
+		'total_orders':total_orders,
 	}
 
 	return render(request,'main/customer.html',context)
@@ -87,3 +88,29 @@ def createOrderView(request):
 	context = {'form':form}
 
 	return render(request,'main/createorder.html',context)
+
+def orderUpdateView(request, order_id):
+	order = Order.objects.get(id=order_id)
+	form = OrderForm(instance=order)
+	if request.method == 'POST':
+		form = OrderForm(request.POST, instance=order)
+		if form.is_valid():
+			form.save()
+			return redirect('home')
+
+	context = {'form':form}
+
+	return render(request,'main/orderupdate.html', context)
+
+def orderDeleteView(request, order_id):
+	order = Order.objects.get(id=order_id)
+
+	if request.method == 'POST':
+		order.delete()
+		return redirect('home')
+
+	context = {'order':order}
+
+	return render(request,'main/deleteorder.html', context)
+
+

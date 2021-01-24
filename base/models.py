@@ -11,6 +11,9 @@ class Customer(models.Model):
 	def __str__(self):
 		return self.name
 
+	def total_orders(self):
+		return self.order_set.all()
+
 class Tag(models.Model):
 	name = models.CharField(max_length=100, null=True)
 
@@ -46,3 +49,12 @@ class Order(models.Model):
 
 	def __str__(self):
 		return self.status		
+
+	def get_status(self):
+		a = []
+		for status in self.STATUS:
+			a.append(status[0])
+		return a
+
+
+

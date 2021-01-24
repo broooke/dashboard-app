@@ -21,7 +21,7 @@
 		<div class="card card-body mt-3">
 			<h5>Total Orders:</h5>
 			<hr>
-			<h1 class="text-center">{{orders.count}}</h1>
+			<h1 class="text-center">{{total_orders.count}}</h1>
 		</div>
 	</div>
 </div>
@@ -43,8 +43,8 @@
 					</select></td></tr>
 					<tr><th><label for="id_status">Status:</label></th><td><select name="status" id="id_status">
 					  <option value="" selected>---------</option>
-					  {% for order in orders_status %}
-					  <option value="{{order.status}}">{{order.status}}</option>
+					  {% for a in status %}
+					  <option value="{{a}}">{{a}}</option>
 					  {%endfor%}
 
 					</select></td></tr>

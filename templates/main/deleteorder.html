@@ -1,0 +1,27 @@
+{% extends 'basic/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<br>
+	<div class="col">
+		<div class="col-md">
+			<div class="card mb-3" style="width: 500px; margin: auto;">
+			  	<div class="card-header text-center">
+			  		<h5 class="card-title">Delete Order - {{order.product.name}}</h5>
+			  	</div>
+			  	<div class="card-body">
+			  		<form method='POST'>
+			  		<div class="row">
+				  			<div class="col">
+				  			{%csrf_token%}
+					    		<a class="btn btn-warning btn-sm btn-block" href="{% url 'home'%}">Cancel</a>
+					    	</div>
+					    	<div class="col">
+					    		<input class="btn btn-danger btn-sm btn-block" type="submit" value="Delete" name="">
+					    	</div>
+			    	</div>
+			    	</form>
+			  	</div>
+			</div>
+		</div>
+	</div>
+{%endblock%}
