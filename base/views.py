@@ -3,6 +3,8 @@ from .models import (
 					Customer, Product,
 					Order,Tag
 					)
+from .forms import CustomerForm, OrderForm
+from django.contrib import messages
 
 
 # Create your views here.
@@ -30,6 +32,7 @@ def customerView(request, user_id):
 	products = Product.objects.all()
 	orders = Order.objects.filter(customer=customer)
 	orders_status = Order.objects.all()
+	a = orders_status.values('status')
 
 	if 'product' in request.GET:
 		product = request.GET['product']
@@ -54,3 +57,33 @@ def productsView(request):
 		'products':products,
 	}
 	return render(request,'main/products.html', context)
+
+def createCustomerView(request):
+	if request.method == 'POST':
+		form = CustomerForm(request.POST)
+		if form.is_valid():
+			form.save()
+			return redirect('home')
+		else:
+			messages.info(request, 'Three credits remain in your account.')
+	else:
+		form = CustomerForm()
+
+	context = {'form':form}
+
+	return render(request,'main/createcustomer.html',context)
+
+def createOrderView(request):
+	if request.method == 'POST':
+		form = OrderForm(request.POST)
+		if form.is_valid():
+			form.save()
+			return redirect('home')
+		else:
+			messages.info(request, 'Three credits remain in your account.')
+	else:
+		form = OrderForm()
+
+	context = {'form':form}
+
+	return render(request,'main/createorder.html',context)

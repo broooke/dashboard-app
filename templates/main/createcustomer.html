@@ -1,0 +1,31 @@
+{% extends 'basic/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% if messages %}
+<br>
+<div class="alert alert-success" role="alert">
+	<ul class="messages">
+	{% for message in messages %}
+		<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+	{% endfor %}
+	</ul>
+</div>
+{% endif %}
+<br>
+	<div class="col">
+		<div class="col-md">
+			<div class="card mb-3" style="width: 500px; margin: auto;">
+			  	<div class="card-header text-center">
+			  		<h5 class="card-title">Create Customer</h5>
+			  	</div>
+			  	<div class="card-body">
+			    	<form method="post">
+			    		{% csrf_token %}
+			    		{{form|crispy}}
+			    		<input class="btn btn-primary  btn-sm btn-block" type="submit" value="Create" name="">
+			    	</form>
+			  	</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
