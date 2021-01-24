@@ -46,15 +46,16 @@ class Order(models.Model):
 	product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
 	date_created = models.DateTimeField(auto_now_add=True, null=True)
 	status = models.CharField(max_length=200, null=True, choices=STATUS)
+	note = models.CharField(max_length=1000, null=True)
 
 	def __str__(self):
 		return self.status		
 
-	def get_status(self):
-		a = []
-		for status in self.STATUS:
-			a.append(status[0])
-		return a
+	# def get_status(self):
+	# 	a = []
+	# 	for status in self.STATUS:
+	# 		a.append(status[0])
+	# 	return a
 
 
 

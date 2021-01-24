@@ -5,6 +5,7 @@ from .models import (
 					)
 from .forms import CustomerForm, OrderForm
 from django.contrib import messages
+from .filters import OrderFilter
 
 
 # Create your views here.
@@ -28,25 +29,24 @@ def homeView(request):
 
 def customerView(request, user_id):
 	customer = Customer.objects.get(id=user_id)
-	products = Product.objects.all()
 	orders = Order.objects.filter(customer=customer)
-	status = Order.objects.all()[0].get_status()
 	total_orders = customer.total_orders()
-	print(total_orders)
 
-	if 'product' in request.GET:
-		product = request.GET['product']
-		status = request.GET['status']
-		orders = orders.filter(product__name__icontains=product,
-			status__icontains=status)
+	myFilter = OrderFilter(request.GET, queryset=orders)
+	orders = myFilter.qs
+
+	# if 'product' in request.GET:
+	# 	product = request.GET['product']
+	# 	status = request.GET['status']
+	# 	orders = orders.filter(product__name__icontains=product,
+	# 		status__icontains=status)
 
 
 	context={
 		'orders':orders,
 		'customer':customer,
-		'products':products,
-		'status':status,
 		'total_orders':total_orders,
+		'myFilter':myFilter,
 	}
 
 	return render(request,'main/customer.html',context)
