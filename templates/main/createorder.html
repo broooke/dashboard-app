@@ -14,15 +14,19 @@
 <br>
 	<div class="col">
 		<div class="col-md">
-			<div class="card mb-3" style="width: 500px; margin: auto;">
+			<div class="card mb-3" style="width: 800px; margin: auto;">
 			  	<div class="card-header text-center">
 			  		<h5 class="card-title">Create Order</h5>
 			  	</div>
 			  	<div class="card-body">
 			    	<form method="post">
 			    		{% csrf_token %}
-			    		{{form|crispy}}
-			    		<input class="btn btn-primary  btn-sm btn-block" type="submit" value="Create" name="">
+			    		{{ formset.management_form }}
+			    		{% for form in formset %}
+			    			{{form}}
+			    			<hr>
+			    		{% endfor %}
+			    		<input class="btn btn-primary  btn-sm" type="submit" value="Create" name="">
 			    	</form>
 			  	</div>
 			</div>

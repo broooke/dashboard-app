@@ -6,10 +6,16 @@ from .models import (
 from .forms import CustomerForm, OrderForm
 from django.contrib import messages
 from .filters import OrderFilter
-
+from django.forms import inlineformset_factory
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from .decorators import unauthenticated_user, allowed_users, admin_only
+from django.contrib.auth.models import Group
 
 # Create your views here.
-
+@login_required(login_url='login')
+@admin_only
 def homeView(request):
 	customers = Customer.objects.all().order_by('name')
 	orders = Order.objects.all()
@@ -27,6 +33,8 @@ def homeView(request):
 
 	return render(request,'main/home.html', context)
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Admin'])
 def customerView(request, user_id):
 	customer = Customer.objects.get(id=user_id)
 	orders = Order.objects.filter(customer=customer)
@@ -51,6 +59,8 @@ def customerView(request, user_id):
 
 	return render(request,'main/customer.html',context)
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Admin'])
 def productsView(request):
 	products = Product.objects.all().order_by('name')
 
@@ -59,6 +69,8 @@ def productsView(request):
 	}
 	return render(request,'main/products.html', context)
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Admin'])
 def createCustomerView(request):
 	if request.method == 'POST':
 		form = CustomerForm(request.POST)
@@ -74,21 +86,28 @@ def createCustomerView(request):
 
 	return render(request,'main/createcustomer.html',context)
 
-def createOrderView(request):
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Admin'])
+def createOrderView(request, customer_id):
+	OrderFormSet = inlineformset_factory(Customer, Order, fields=('product','status',), extra=10)
+	customer = Customer.objects.get(id=customer_id)
 	if request.method == 'POST':
-		form = OrderForm(request.POST)
-		if form.is_valid():
-			form.save()
+		formset = OrderFormSet(request.POST, instance=customer)
+		if formset.is_valid():
+			formset.save()
 			return redirect('home')
 		else:
 			messages.info(request, 'Three credits remain in your account.')
 	else:
-		form = OrderForm()
+		# form = OrderForm(initial={'customer':customer})
+		formset = OrderFormSet(queryset=Order.objects.none(), instance=customer)
 
-	context = {'form':form}
+	context = {'formset':formset}
 
 	return render(request,'main/createorder.html',context)
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Admin'])
 def orderUpdateView(request, order_id):
 	order = Order.objects.get(id=order_id)
 	form = OrderForm(instance=order)
@@ -102,6 +121,8 @@ def orderUpdateView(request, order_id):
 
 	return render(request,'main/orderupdate.html', context)
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Admin'])
 def orderDeleteView(request, order_id):
 	order = Order.objects.get(id=order_id)
 
@@ -113,4 +134,44 @@ def orderDeleteView(request, order_id):
 
 	return render(request,'main/deleteorder.html', context)
 
+@unauthenticated_user
+def signupView(request):
+	if request.method == 'POST':
+		form = UserCreationForm(request.POST)
+		if form.is_valid():
+			user = form.save()
+			group = Group.objects.get(name='Customer')
+			user.groups.add(group)
+			return redirect('login')
+	else:
+		form = UserCreationForm()
 
+	context = {'form':form}
+
+	return render(request,'main/signup.html', context)
+
+@unauthenticated_user
+def loginView(request):
+	if request.method == 'POST':
+		form = AuthenticationForm(data=request.POST)
+		if form.is_valid():
+			username = form.cleaned_data['username']
+			password = form.cleaned_data['password']
+			user = authenticate(username=username, password=password)
+			if user is not None:
+				login(request, user)
+				return redirect('home')
+	else:
+		form = AuthenticationForm()
+
+	context = {'form':form}
+
+	return render(request,'main/login.html', context)
+
+def logoutView(request):
+	logout(request)
+	return redirect('login')
+
+def userPageView(request):
+	context={}
+	return render(request, 'main/user.html', context)
