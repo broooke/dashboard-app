@@ -19,9 +19,9 @@ from django.contrib.auth.models import Group
 def homeView(request):
 	customers = Customer.objects.all().order_by('name')
 	orders = Order.objects.all()
-	orders_total = len(orders)
-	orders_delivered = len(orders.filter(status='Delivered'))
-	orders_pending = len(orders.filter(status='Pending'))
+	orders_total = orders.count()
+	orders_delivered = orders.filter(status='Delivered').count()
+	orders_pending = orders.filter(status='Pending').count()
 
 	context = {
 	'customers':customers,
@@ -142,6 +142,10 @@ def signupView(request):
 			user = form.save()
 			group = Group.objects.get(name='Customer')
 			user.groups.add(group)
+			Customer.objects.create(
+				user=user,
+				name=user.username,
+				)
 			return redirect('login')
 	else:
 		form = UserCreationForm()
@@ -172,6 +176,36 @@ def logoutView(request):
 	logout(request)
 	return redirect('login')
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Customer'])
 def userPageView(request):
-	context={}
+	orders = request.user.customer.order_set.all()
+	total_orders = orders.count()
+	orders_delivered = orders.filter(status='Delivered').count()
+	orders_pending = orders.filter(status='Pending').count()
+
+	context={'orders':orders,'total_orders':total_orders,
+	'orders_delivered':orders_delivered,'orders_pending':orders_pending}
 	return render(request, 'main/user.html', context)
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Admin'])
+def deleteCustomerView(request, customer_id):
+	customer = Customer.objects.get(id=customer_id)
+	customer.delete()
+	return redirect('home')
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Customer'])
+def settingsView(request):
+	customer = request.user.customer
+	form = CustomerForm(instance=customer)
+	if request.method == 'POST':
+		form = CustomerForm(request.POST, request.FILES, instance=customer)
+		if form.is_valid():
+			form.save()
+			return redirect('settings')
+
+
+	context={'form':form, 'customer':customer}
+	return render(request, 'main/settings.html', context)

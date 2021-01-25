@@ -13,6 +13,8 @@ urlpatterns = [
     path('login/', views.loginView, name='login'),
     path('logout/', views.logoutView, name='logout'),
     path('user/', views.userPageView, name='userpage'),
+    path('delete/customer/<str:customer_id>', views.deleteCustomerView, name='deletecustomer'),
+    path('settings/', views.settingsView, name='settings'),
 ]
 
 

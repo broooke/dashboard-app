@@ -7,6 +7,7 @@
 			<hr>
 			<a class="btn btn-outline-info  btn-sm btn-block" href="">Update Customer</a>
 			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'createorder' customer.id%}">Place new Order</a>
+			<a class="btn btn-outline-danger  btn-sm btn-block" href="{% url 'deletecustomer' customer.id%}">Delete Customer</a>
 		</div>
 	</div>
 	<div class="col-md">
