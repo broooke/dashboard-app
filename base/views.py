@@ -140,12 +140,7 @@ def signupView(request):
 		form = UserCreationForm(request.POST)
 		if form.is_valid():
 			user = form.save()
-			group = Group.objects.get(name='Customer')
-			user.groups.add(group)
-			Customer.objects.create(
-				user=user,
-				name=user.username,
-				)
+			messages.success(request, 'Account was created for ' + user.username)
 			return redirect('login')
 	else:
 		form = UserCreationForm()

@@ -14,6 +14,9 @@
 		    		{{form|crispy}}
 		    		<input class="btn btn-primary  btn-sm btn-block" type="submit" value="Sign In" name="">
 		    	</form>
+		    	{% for message in messages %}
+					<p class="alert alert-success" role="alert">{{message}}</p>
+				{% endfor %}	
 		  	</div>
 		</div>
 	</div>
